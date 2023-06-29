@@ -33,7 +33,7 @@ def computeHistograms(pcd):
     :return: FPFH, xyz coordinates
     """
     pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=2.5, max_nn=30))
-    pcd_fpfh = o3d.registration.compute_fpfh_feature(pcd, o3d.geometry.KDTreeSearchParamRadius(radius=5))
+    pcd_fpfh = o3d.pipelines.registration.compute_fpfh_feature(pcd, o3d.geometry.KDTreeSearchParamRadius(radius=5))
     return np.asarray(pcd_fpfh.data).T, np.asarray(pcd.points)
 
 
@@ -106,7 +106,7 @@ def getLeaves(xyz, labels):
                 points.append(xyz[i])
 
         leaves.append(points)
-    return np.asarray(leaves), keep_labels
+    return leaves, keep_labels
 
 
 def convertEdgesFormat(points, graph):
@@ -184,7 +184,7 @@ def convert_to_skeleton_class(cnodes, graph):
     S = skel.Skeleton()
     for i in range(len(points)):
       p = points[i]
-      V = np.array(p[0:3], dtype=np.float)
+      V = np.array(p[0:3], dtype=np.float64)
       S.add_vertex(V)
       L = int(p[3])
       S.add_label(L)
