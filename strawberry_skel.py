@@ -17,9 +17,9 @@ import os
 from data_loader import filter_xyz
 
 
-def experiment_1_semantic():
+def experiment_1_semantic(sample):
     selected_cats = ["petiole"]
-    pcd = filter_xyz("demo", selected_cats)
+    pcd = filter_xyz(sample, selected_cats)
         
     pcd.paint_uniform_color([1, 0.706, 0])
     data = np.array(pcd.points)
@@ -38,12 +38,12 @@ def experiment_1_semantic():
 
     # o3d.visualization.draw_geometries([pcd, line_set])
     o3d.io.write_line_set(
-            f"Results/som/demo_semantic.ply", line_set, write_ascii=True)
+            f"Results/som/{sample}_semantic.ply", line_set, write_ascii=True)
 
 
 def experiment_2_instance():
     selected_cats = ["petiole"] 
-    pcds = filter_xyz("demo", selected_cats, filter_instances=True)
+    pcds = filter_xyz(sample, selected_cats, filter_instances=True)
     for i, pcd in enumerate(pcds):     
         data = np.array(pcd.points)
         cwise_skeleton_nodes = som.getSkeleton([data])
@@ -59,15 +59,19 @@ def experiment_2_instance():
 
         # o3d.visualization.draw_geometries([pcd, line_set])
         o3d.io.write_line_set(
-            f"Results/som/demo_i{i}.ply", line_set, write_ascii=True)
+            f"Results/som/{sample}_i{i}.ply", line_set, write_ascii=True)
 
 if __name__ == "__main__":
 
     if not os.path.exists("Results/som"):
         os.mkdir("Results/som")
 
-    # Case 1: Semantic segmentation
-    experiment_1_semantic()  
-    
-    # Case 2: Instance segmentation 
-    experiment_2_instance()
+    samples = ["demo"]
+
+    for sample in samples:
+
+        # Case 1: Semantic segmentation
+        experiment_1_semantic(sample)  
+        
+        # Case 2: Instance segmentation 
+        experiment_2_instance(sample)
