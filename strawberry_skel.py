@@ -59,7 +59,7 @@ def experiment_2_instance():
 
         # o3d.visualization.draw_geometries([pcd, line_set])
         o3d.io.write_line_set(
-            f"Results/som/{sample}_i{i}.ply", line_set, write_ascii=True)
+            f"Results/som/{sample}_{i}.ply", line_set, write_ascii=True)
 
 if __name__ == "__main__":
 
