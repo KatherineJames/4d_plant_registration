@@ -14,7 +14,7 @@ import skeleton as skel
 import utils
 import os
 
-from data_loader import filter_xyz
+from data_loader import filter_xyz, parse_to_xyz
 
 
 def experiment_1_semantic(sample):
@@ -62,6 +62,9 @@ def experiment_2_instance():
             f"Results/som/{sample}_i{i}.ply", line_set, write_ascii=True)
 
 if __name__ == "__main__":
+
+    if not os.path.exists("Data/demo.xyz"):
+        parse_to_xyz()
 
     if not os.path.exists("Results/som"):
         os.mkdir("Results/som")
