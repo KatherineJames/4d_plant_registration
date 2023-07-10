@@ -17,33 +17,14 @@ import os
 from data_loader import filter_xyz, parse_to_xyz
 
 
-def experiment_1_semantic(sample):
-    selected_cats = ["petiole"]
-    pcd = filter_xyz(sample, selected_cats)
-        
-    pcd.paint_uniform_color([1, 0.706, 0])
-    data = np.array(pcd.points)
-
-    # compute skel
-    cwise_skeleton_nodes = som.getSkeleton([data])
-    graph = som.getGraph(cwise_skeleton_nodes, data)
-
-    # convert this graph to skeleton class
-    S = utils.convert_to_skeleton_class(cwise_skeleton_nodes, graph)
-
-    edges = S.edges
-    nodes = S._XYZ 
-    line_set = o3d.geometry.LineSet(points=o3d.utility.Vector3dVector(
-            nodes), lines=o3d.utility.Vector2iVector(edges))
-
-    # o3d.visualization.draw_geometries([pcd, line_set])
-    o3d.io.write_line_set(
-            f"Results/som/{sample}_semantic.ply", line_set, write_ascii=True)
-
-
-def experiment_2_instance():
+def skeltonise(sample):
     selected_cats = ["petiole"] 
-    pcds = filter_xyz(sample, selected_cats, filter_instances=True)
+    # pcds = filter_xyz(sample, selected_cats, filter_instances=True)
+    pcds = []
+    files = os.listdir(f"Data/young/{sample}/")
+    for file in files:       
+        pcds.append(o3d.io.read_point_cloud(f"Data/young/{sample}/" + file))
+    
     for i, pcd in enumerate(pcds):     
         data = np.array(pcd.points)
         cwise_skeleton_nodes = som.getSkeleton([data])
@@ -59,22 +40,20 @@ def experiment_2_instance():
 
         # o3d.visualization.draw_geometries([pcd, line_set])
         o3d.io.write_line_set(
-            f"Results/som/{sample}_{i}.ply", line_set, write_ascii=True)
+            f"Results/som/{sample}/{files[i]}", line_set, write_ascii=True)
 
 if __name__ == "__main__":
 
-    if not os.path.exists("Data/demo.xyz"):
-        parse_to_xyz()
+    samples = ["1","2","3","4","5","6","7","8","9","10",]
+    for sample in samples:       
+        if not os.path.exists("Results/som"):
+            os.mkdir("Results/som")
 
-    if not os.path.exists("Results/som"):
-        os.mkdir("Results/som")
-
-    samples = ["demo"]
-
-    for sample in samples:
-
-        # Case 1: Semantic segmentation
-        experiment_1_semantic(sample)  
-        
-        # Case 2: Instance segmentation 
-        experiment_2_instance(sample)
+        if not os.path.exists(f"Results/som/{sample}"):
+            os.mkdir(f"Results/som/{sample}")
+     
+        if not os.path.exists(f"Results/som/{sample}"):
+            os.mkdir(f"Results/som/{sample}")
+                   
+        skeltonise(sample)
+      
