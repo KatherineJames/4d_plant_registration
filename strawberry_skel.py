@@ -49,7 +49,7 @@ def skeletonise(path):
 
 if __name__ == "__main__":
 
-    data_dir = "/home/katherine/Documents/Berry4D/petiole_instances"      
+    data_dir = "path/to/petiole_instances"      
     
     if not os.path.exists("Results"):            
         os.mkdir("Results")    
