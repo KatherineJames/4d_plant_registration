@@ -70,11 +70,11 @@ def getSkeleton(organs):
     :param organs: the point cloud segmented into stem and leaves, each list in organs represents a class
     :return: the nodes of the skeleton, each list in skeletons represents a class
     """
-    skeletons = []
+    skeletons = []   
     for i, o in enumerate(organs):
 
         if i == 0:
-            skel_points = computeSkelPoints(o, i)
+            skel_points = computeSkelPoints(o, i)           
             skeleton = somSkeleton(o, x=skel_points, y=1)
             skeletons.append(skeleton)
 
@@ -154,23 +154,23 @@ def buildStemGraph(stem, points):
     """
     edges = []
     adj_matrix = np.zeros((len(stem), len(stem)))
-
+   
     kdt = spatial.cKDTree(points)
     nbrs = NearestNeighbors(n_neighbors=5, algorithm='ball_tree').fit(stem)
     for i, s in enumerate(stem):
-        distances, indices = nbrs.kneighbors([s])
+        distances, indices = nbrs.kneighbors([s])       
         for j in range(len(distances[0])):
             if 0 < distances[0][j] < 30:
                 e = [s, stem[indices[0][j]]]
-                midpoint = np.mean(e, axis=0)
-                nbr = kdt.query_ball_point(midpoint, 5)
+                midpoint = np.mean(e, axis=0)                
+                nbr = kdt.query_ball_point(midpoint, 10) # set to 10 for synthetic data                
                 if len(nbr) > 0:
                     edges.append(e)
                     idx = indices[0][j]
                     adj_matrix[i, idx] = distances[0][j]
 
     spanning_tree = minimum_spanning_tree(adj_matrix)
-    adj_matrix = spanning_tree.toarray()
+    adj_matrix = spanning_tree.toarray()    
 
     edges = []  # decoding spanning tree
     for i in range(len(stem)):
@@ -190,10 +190,12 @@ def getGraph(skeletons, pcd):
     :return: a list of edges, representing the skeleton-like graph
     """
 
+    
+
     graph = []
-    for i, s in enumerate(skeletons):
-        if i == 0:
-            stem = buildStemGraph(s, pcd)
+    for i, s in enumerate(skeletons):        
+        if i == 0:           
+            stem = buildStemGraph(s, pcd)    
             graph.append(np.asarray(stem))
 
         else:
